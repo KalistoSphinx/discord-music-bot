@@ -38,7 +38,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 
     try{
-        await command.execute(interaction);
+        await command.execute(interaction, client);
         console.log(`${interaction.user.displayName} used a command`);
     } catch(e){
         console.error(e);
