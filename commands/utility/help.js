@@ -6,7 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder().setName("help").setDescription("Get all bot commands"),
     async execute(interaction, client) {
 
-        const fields = []
+        const utilityCommands = []
         const allFiles = fs.readdirSync(__dirname);
 
         for(const file of allFiles){
@@ -22,6 +22,7 @@ module.exports = {
 
         const myEmbed = new EmbedBuilder()
             .setColor(0x0099ff)
+            .setTitle("Utility Commands")
             .setAuthor({
                 name: "Viego Music Bot",
                 iconURL: client.user.displayAvatarURL()
