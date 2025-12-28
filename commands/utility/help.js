@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require("discord.js")
+const { EmbedBuilder, SlashCommandBuilder, PermissionsBitField } = require("discord.js")
 const fs = require('node:fs');
 const path = require('node:path');
 

@@ -1,12 +1,20 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, MessageFlags } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits, MessageFlags, Guild } = require('discord.js');
+const { Player, QueryType, GuildQueueEvent } = require('discord-player');
+const { DefaultExtractors } = require('@discord-player/extractor');
 require("dotenv").config()
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
+const player = new Player(client);
 
-client.once(Events.ClientReady, (readyClient) => {
-	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+client.once(Events.ClientReady, async (readyClient) => {
+    try {
+        await player.extractors.loadMulti(DefaultExtractors);
+    } catch (e) {
+        console.error('Failed to load extractors', e);
+    }
+    console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
 client.commands = new Collection();
@@ -44,6 +52,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
         console.error(e);
     }
 
+})
+
+player.events.on(GuildQueueEvent.PlayerStart, async (queue, track) => {
+    const {channel} = queue.metadata;
+    await channel.send(`Now Playing: ${track.title}`)
 })
 
 client.login(process.env.BOT_TOKEN);
