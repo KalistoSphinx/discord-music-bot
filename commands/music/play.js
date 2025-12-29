@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageFlags } = require("discord.js");
+const { SlashCommandBuilder, MessageFlags, PermissionFlagsBits } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,9 +10,9 @@ module.exports = {
                 .setDescription("The song to play")
                 .setRequired(true),
         ),
-    async execute(interaction, client) {
-        const shoukaku = interaction.client.shoukaku;
+    async execute(interaction) {
         const query = interaction.options.getString("song", true);
+        const kazagumo = interaction.client.kazagumo
 
         const voiceChannel = interaction.member.voice.channel;
 
@@ -23,12 +23,34 @@ module.exports = {
             });
         }
 
-        const player = await shoukaku.joinVoiceChannel({
-            guildId: `${interaction.guildId}`,
-            channelId: `${interaction.member.voice.channel.id}`,
-            shardId: 0,
+        if(interaction.guild.members.me.voice.channel && interaction.guild.members.me.voice.channel !== voiceChannel){
+            return interaction.reply("I am already playing in a different voice channel!")
+        }
+
+        if(!voiceChannel.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.Connect)){
+            return interaction.reply("I dont have permission to join your voice channel");
+        }
+
+        if(!voiceChannel.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.Speak)){
+            return interaction.reply("I dont have permission to speak in your voice channel");
+        }
+
+        const player = await kazagumo.createPlayer({
+            guildId: interaction.guildId,
+            textId: interaction.channelId,
+            voiceId: interaction.member.voice.channel.id,
         })
 
-        setTimeout(() => shoukaku.leaveVoiceChannel(player.guildId), 30000).unref();
+        await interaction.deferReply();
+
+        const result = await kazagumo.search(query, {source: "ytmsearch:", requester: interaction.member})
+
+        player.queue.add(result.tracks[0]);
+
+        await interaction.editReply(`Queued: **${result.tracks[0].raw.info.title}**`)
+
+        if(!player.playing && !player.paused){
+            player.play();
+        }
     },
 };
