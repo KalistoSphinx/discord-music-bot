@@ -12,7 +12,7 @@ module.exports = {
         ),
     async execute(interaction) {
         const query = interaction.options.getString("song", true);
-        const kazagumo = interaction.client.kazagumo
+        const riffy = interaction.client.riffy;
 
         const voiceChannel = interaction.member.voice.channel;
 
@@ -35,22 +35,42 @@ module.exports = {
             return interaction.reply("I dont have permission to speak in your voice channel");
         }
 
-        const player = await kazagumo.createPlayer({
-            guildId: interaction.guildId,
-            textId: interaction.channelId,
-            voiceId: interaction.member.voice.channel.id,
-        })
-
         await interaction.deferReply();
 
-        const result = await kazagumo.search(query, {source: "ytmsearch:", requester: interaction.member})
+        const player = riffy.createConnection({
+            guildId: interaction.guildId,
+            voiceChannel: interaction.member.voice.channel.id,
+            textChannel: interaction.channelId,
+            deaf: true
+        })
 
-        player.queue.add(result.tracks[0]);
+        const result = await riffy.resolve({
+            query: query,
+            requester: interaction.user,
+        })
 
-        await interaction.editReply(`Queued: **${result.tracks[0].raw.info.title}**`)
+        const {loadType, tracks} = result;
 
-        if(!player.playing && !player.paused){
-            player.play();
+        if(loadType == "playlist"){
+
+            for(const track of result.tracks){
+                track.info.requester = interaction.user;
+                player.queue.add(track);
+            }
+
+            await interaction.editReply(`Added: \`${tracks.length}\` tracks from **${playlistInfo.name}**`)
+            if(!player.playing && !player.paused) player.play();
+            
+        } else if(loadType == "search" || loadType == "track"){
+            const track = tracks.shift();
+            track.info.requester = interaction.user;
+            
+            player.queue.add(track);
+
+            await interaction.editReply(`Queued: **${track.rawData.info.title}** by **${track.rawData.info.author}**`)
+            if (!player.playing && !player.paused) player.play();
+        } else {
+            await interaction.editReply("No results found");
         }
     },
 };
