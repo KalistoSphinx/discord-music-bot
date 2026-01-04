@@ -106,7 +106,7 @@ riffy.on("trackStart", async (player, track) => {
 })
 
 riffy.on("queueEnd", (player) => {
-    const channel = client.channels.cache.get(player.channelId);
+    const channel = client.channels.cache.get(player.textChannel);
     if(channel){
         channel.send("Queue Ended. Disconnecting in 30 seconds if no new tracks are added.")
     }
@@ -114,7 +114,9 @@ riffy.on("queueEnd", (player) => {
     setTimeout(() => {
         if(!player.playing && player.queue.size == 0){
             player.destroy();
-            channel.send("Disconnected due to inactivity");
+            if(channel){
+                channel.send("Disconnected due to inactivity");
+            }
         }
     }, 30000)
 })
