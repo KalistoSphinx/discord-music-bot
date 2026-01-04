@@ -49,7 +49,7 @@ module.exports = {
             requester: interaction.user,
         })
 
-        const {loadType, tracks} = result;
+        const {loadType, tracks, playlistInfo} = result;
 
         if(loadType == "playlist"){
 
