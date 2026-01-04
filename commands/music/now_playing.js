@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require("discord.js");
 
 function formatTime(time){
     const seconds = Math.floor((time / 1000) % 60)
@@ -31,7 +31,21 @@ module.exports = {
     data: new SlashCommandBuilder().setName("nowplaying").setDescription("Get the current playing track"),
     async execute(interaction) {
 
-        const player = interaction.client.riffy.get(interaction.guildId);
+        const player = interaction.client.riffy.players.get(interaction.guildId);
+
+        if(!player){
+            return interaction.reply({
+                content: "❌ No player found in this server.",
+                flags: MessageFlags.Ephemeral
+            });
+        }
+
+        if (!player.playing) {
+            return interaction.reply({
+                content: "❌ No track is currently playing",
+                flags: MessageFlags.Ephemeral
+            });
+        }
 
         const currentTrack = player.current
 

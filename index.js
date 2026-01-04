@@ -89,6 +89,7 @@ client.on("raw", (d) => {
 riffy.on("nodeConnect", node => {
     console.log(`Node "${node.name}" connected.`)
 })
+
  
 riffy.on("nodeError", (node, error) => {
     console.log(`Node "${node.name}" encountered an error: ${error.message}.`)
@@ -103,5 +104,20 @@ riffy.on("trackStart", async (player, track) => {
         channel.send({embeds: [myEmbed]})
     }
 })
+
+riffy.on("queueEnd", (player) => {
+    const channel = client.channels.cache.get(player.channelId);
+    if(channel){
+        channel.send("Queue Ended. Disconnecting in 30 seconds if no new tracks are added.")
+    }
+
+    setTimeout(() => {
+        if(!player.playing && player.queue.size == 0){
+            player.destroy();
+            channel.send("Disconnected due to inactivity");
+        }
+    }, 30000)
+})
+
 
 client.login(process.env.BOT_TOKEN);
