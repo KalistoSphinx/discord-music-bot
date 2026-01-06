@@ -141,5 +141,12 @@ riffy.on("queueEnd", (player) => {
     }, 30000)
 })
 
+riffy.on("playerDisconnect", (player) => {
+    const member = player.get("DJuser");
+    const role = player.get("DJrole");
+
+    player.clearData();
+    member.roles.remove(role);
+})
 
 client.login(process.env.BOT_TOKEN);

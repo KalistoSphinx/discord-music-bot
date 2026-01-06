@@ -37,8 +37,6 @@ module.exports = {
 
         await interaction.deferReply();
 
-        
-
         const player = riffy.createConnection({
             guildId: interaction.guildId,
             voiceChannel: interaction.member.voice.channel.id,
@@ -46,9 +44,22 @@ module.exports = {
             deaf: true
         })
 
+        const isThereDJ = player.get("DJuser") ?? false
+
+        if(!isThereDJ){
+            const role = interaction.guild.roles.cache.find(r => r.name.toLowerCase() === "dj")
+
+            if(!role) return interaction.reply("DJ role not setup");
+            
+            player.set("DJuser", interaction.member)
+            player.set("DJrole", role);
+
+            await interaction.member.roles.add(role);
+        }
+
         const result = await riffy.resolve({
             query: query,
-            requester: interaction.user,
+            requester: interaction.member,
         })
 
         const {loadType, tracks, playlistInfo} = result;
