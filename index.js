@@ -15,10 +15,10 @@ const client = new Client({
 
 const nodes = [
     {
-        name: "aiko-project",
-        host: "lavalink.aiko-project.xyz",
-        port: 2333,
-        password: "Rikka",
+        name: "embotic",
+        host: "46.202.82.164",
+        port: 1026,
+        password: "jmlitev4",
         secure: false,
     }
 ];
@@ -84,12 +84,32 @@ client.on("raw", (d) => {
     riffy.updateVoiceState(d);
 });
 
+client.on(Events.VoiceStateUpdate, (oldState, newState) => {
+    const botVoiceChannel = oldState.guild.members.me.voice.channel;
+    
+    if (!botVoiceChannel) return;
+
+    if (oldState.channelId === botVoiceChannel.id || newState.channelId === botVoiceChannel.id) {
+        const members = botVoiceChannel.members.filter(member => !member.user.bot);
+        
+        if (members.size === 0) {
+            const player = client.riffy.players.get(oldState.guild.id);
+            if (player) {
+                player.destroy();
+                const channel = client.channels.cache.get(player.textChannel);
+                if (channel) {
+                    channel.send("Left the voice channel because no members are present.");
+                }
+            }
+        }
+    }
+});
+
 // Riffy Events
 
 riffy.on("nodeConnect", node => {
     console.log(`Node "${node.name}" connected.`)
 })
-
  
 riffy.on("nodeError", (node, error) => {
     console.log(`Node "${node.name}" encountered an error: ${error.message}.`)

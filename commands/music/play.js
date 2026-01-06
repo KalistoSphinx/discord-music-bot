@@ -37,6 +37,8 @@ module.exports = {
 
         await interaction.deferReply();
 
+        
+
         const player = riffy.createConnection({
             guildId: interaction.guildId,
             voiceChannel: interaction.member.voice.channel.id,
