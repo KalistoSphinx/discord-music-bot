@@ -16,7 +16,7 @@ const client = new Client({
 const nodes = [
     {
         name: "embotic",
-        host: "46.202.82.164",
+        host: "46.202.82.147",
         port: 1026,
         password: "jmlitev4",
         secure: false,
