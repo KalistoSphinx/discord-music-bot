@@ -15,10 +15,10 @@ const client = new Client({
 
 const nodes = [
     {
-        name: "embotic",
-        host: "46.202.82.147",
-        port: 1026,
-        password: "jmlitev4",
+        name: "jirayu",
+        host: "lavalink.jirayu.net",
+        port: 13592,
+        password: "youshallnotpass",
         secure: false,
     }
 ];
