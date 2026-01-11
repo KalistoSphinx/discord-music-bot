@@ -35,9 +35,11 @@ module.exports = {
 
         if((source > 0 && source <= queue.length) && (destination > 0 && destination <= queue.length)){
 
-            [queue[source-1], queue[destination-1]] = [queue[destination-1], queue[source-1]]
+            const track = queue.splice(source-1, 1)[0];
 
-        await interaction.reply("Track Moved")
+            queue.splice(destination-1, 0, track)
+
+            await interaction.reply("Track Moved")
         } else {
             await interaction.reply({
                 content: "Enter a valid index",
