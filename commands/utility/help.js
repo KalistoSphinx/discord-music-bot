@@ -64,7 +64,7 @@ module.exports = {
             .setColor(0x0099ff)
             .setDescription("To use a command, type \`/<command_name>\`\nFor more information about a command, type \`/help <command_name>\`")
             .setAuthor({
-                name: "Viego's Commands",
+                name: `${interaction.client.user.displayName}'s Commands`,
                 iconURL: interaction.client.user.displayAvatarURL(),
             })
             .setFields(

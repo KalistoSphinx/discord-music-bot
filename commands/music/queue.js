@@ -35,7 +35,7 @@ module.exports = {
         const tracksPerPage = 10;
         const totalPages = Math.ceil(tracks.length / tracksPerPage);
 
-        function getEmbed(page) {
+        function getEmbed(page) {n
             const start = page * tracksPerPage;
             const end = start + tracksPerPage;
             const myEmbed = new EmbedBuilder()
