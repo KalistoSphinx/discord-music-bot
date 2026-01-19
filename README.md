@@ -37,7 +37,7 @@ Start the bot
 ```bash
   npm run start
 ```
-Wait until the lavalink server starts, then you are ready to play the music
+Wait until the lavalink server starts, then you are ready to play music
 
 You should see something like this in the terminal
 
